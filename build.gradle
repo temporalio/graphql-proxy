@@ -41,7 +41,7 @@ dependencies {
   compile "com.google.api.graphql:rejoiner:0.4.0-SNAPSHOT"
   compile "com.google.api.graphql:rejoiner-grpc:0.4.0-SNAPSHOT"
   compile "com.google.api.graphql:rejoiner-guice:0.4.0-SNAPSHOT"
-  compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.3.8.v20160314'
+  compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.41.v20210516'
   compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.2'
   compile 'com.google.inject.extensions:guice-servlet:4.2.0'
   compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.3.27.v20190418'

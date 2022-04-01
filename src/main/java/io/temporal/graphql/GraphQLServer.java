@@ -19,6 +19,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.resource.Resource;
 
 import java.util.logging.Logger;
 
@@ -33,8 +34,8 @@ public class GraphQLServer {
     ResourceHandler resourceHandler = new ResourceHandler();
     resourceHandler.setWelcomeFiles(new String[] {"index.html"});
     resourceHandler.setDirectoriesListed(true);
-    // resource base is relative to the WORKSPACE file
-    resourceHandler.setResourceBase("./src/main/resources");
+    Resource resource = Resource.newClassPathResource("static", false, true);
+    resourceHandler.setBaseResource(resource);
     HandlerList handlerList = new HandlerList();
     handlerList.setHandlers(
         new Handler[] {resourceHandler, new GraphQLHandler(), new DefaultHandler()});

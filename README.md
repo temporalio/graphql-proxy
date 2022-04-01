@@ -37,3 +37,10 @@ Example operation:
   }
 }
 ```
+
+## Docker
+
+```
+docker build . -t temporaltest/graphql
+docker run -p 8081:8081 temporaltest/graphql
+```

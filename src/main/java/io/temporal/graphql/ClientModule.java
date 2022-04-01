@@ -18,13 +18,14 @@ import com.google.inject.AbstractModule;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.temporal.api.workflowservice.v1.WorkflowServiceGrpc;
+import io.temporal.api.operatorservice.v1.OperatorServiceGrpc;
 
-/** Binds a stub for the {@link GreeterGrpc} service. */
 final class ClientModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    ManagedChannel channel = ManagedChannelBuilder.forTarget(System.getenv("TEMPORAL_GRPC_ENDPOINT")).usePlaintext().build();
+    ManagedChannel channel = ManagedChannelBuilder.forTarget(System.getenv("TEMPORAL_GRPC_ENDPOINT")).usePlaintext().build();    
     bind(WorkflowServiceGrpc.WorkflowServiceBlockingStub.class).toInstance(WorkflowServiceGrpc.newBlockingStub(channel));
+    bind(OperatorServiceGrpc.OperatorServiceBlockingStub.class).toInstance(OperatorServiceGrpc.newBlockingStub(channel));
   }
 }

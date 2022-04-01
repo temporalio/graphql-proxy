@@ -9,6 +9,8 @@ Build and run the GraphQL server:
 ```
 git clone https://github.com/temporalio/graphql.git
 cd graphql
+git submodule init
+git submodule update
 ./gradlew installDist
 TEMPORAL_GRPC_ENDPOINT="localhost:7233" ./build/install/temporal-graphql/bin/temporal-graphql-server
 ```

@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.api.graphql.examples.helloworld.graphqlserver;
+package io.temporal.graphql;
 
 import com.google.inject.AbstractModule;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-// import io.grpc.examples.helloworld.GreeterGrpc;
 import io.temporal.api.workflowservice.v1.WorkflowServiceGrpc;
 
 /** Binds a stub for the {@link GreeterGrpc} service. */

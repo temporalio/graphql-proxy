@@ -10,7 +10,7 @@ Build and run the GraphQL server:
 git clone https://github.com/temporalio/graphql.git
 cd graphql
 ./gradlew installDist
-TEMPORAL_GRPC_ENDPOINT="localhost:7233" ./build/install/examples/bin/helloworld-graphqlserver
+TEMPORAL_GRPC_ENDPOINT="localhost:7233" ./build/install/examples/bin/temporal-graphql-server
 ```
 
 Open [localhost:8081](http://localhost:8081/) or point your GraphQL IDE (like [GraphQL Studio](https://studio.apollographql.com/sandbox/explorer)) at `http://localhost:8081/graphql`

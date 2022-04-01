@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.api.graphql.examples.helloworld.graphqlserver;
+package io.temporal.graphql;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;

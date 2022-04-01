@@ -1,56 +1,61 @@
-apply plugin: 'java'
-apply plugin: 'com.google.protobuf'
-apply plugin: 'maven'
-
-
 buildscript {
   repositories {
     mavenCentral()
   }
-  dependencies {
-    // ASSUMES GRADLE 2.12 OR HIGHER. Use plugin version 0.7.5 with earlier
-    // gradle versions
-    classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.1'
-  }
 }
+
+plugins {
+  id 'com.google.protobuf' version '0.8.18'
+}
+
+apply plugin: 'java'
+// Inform IntelliJ projects about the generated code.
+apply plugin: 'idea'
+// Provide convenience executables for trying out the examples.
+apply plugin: 'application'
 
 repositories {
   mavenCentral()
-  mavenLocal()
   maven {
     url 'https://oss.sonatype.org/content/repositories/snapshots/'
   }
 }
 
-// IMPORTANT: You probably want the non-SNAPSHOT version of gRPC. Make sure you
-// are looking at a tagged version of the example and not "master"!
-
-// Feel free to delete the comment at the next line. It is just for safely
-// updating the version in our release process.
-def grpcVersion = '1.21.0' // CURRENT_GRPC_VERSION
+ext {
+  grpcVersion = '1.44.1'
+}
 
 dependencies {
-  compile 'javax.annotation:javax.annotation-api:1.3.2'
-  compile group: 'com.google.protobuf', name: 'protobuf-java-util', version: '3.8.0'
-  compile 'com.google.guava:guava:28.0-jre'
-  compile "com.google.api.grpc:proto-google-common-protos:1.16.0"
-  compile "io.grpc:grpc-netty:${grpcVersion}"
-  compile "io.grpc:grpc-protobuf:${grpcVersion}"
-  compile "io.grpc:grpc-stub:${grpcVersion}"
+  implementation "javax.annotation:javax.annotation-api:1.3.2"
+  implementation group: 'com.google.protobuf', name: 'protobuf-java-util', version: '3.19.4'
+  implementation "com.google.guava:guava:31.1-jre"
+  implementation "com.google.api.grpc:proto-google-common-protos:2.8.0"
+  implementation "io.grpc:grpc-netty:${grpcVersion}"
+  implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+  implementation "io.grpc:grpc-stub:${grpcVersion}"
 
-  compile "com.google.api.graphql:rejoiner:0.4.0-SNAPSHOT"
-  compile "com.google.api.graphql:rejoiner-grpc:0.4.0-SNAPSHOT"
-  compile "com.google.api.graphql:rejoiner-guice:0.4.0-SNAPSHOT"
-  compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.41.v20210516'
-  compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.2'
-  compile 'com.google.inject.extensions:guice-servlet:4.2.0'
-  compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.3.27.v20190418'
-  compile 'net.javacrumbs.future-converter:future-converter-java8-guava:1.1.0'
+  implementation "com.google.api.graphql:rejoiner:0.4.0-SNAPSHOT"
+  implementation "com.google.api.graphql:rejoiner-grpc:0.4.0-SNAPSHOT"
+  implementation "com.google.api.graphql:rejoiner-guice:0.4.0-SNAPSHOT"
+  implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.41.v20210516'
+  implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.2'
+  implementation "com.google.inject.extensions:guice-servlet:4.2.0"
+  implementation group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.3.27.v20190418'
+  implementation "net.javacrumbs.future-converter:future-converter-java8-guava:1.1.0"
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs 'build/generated/source/proto/main/grpc'
+      srcDirs 'build/generated/source/proto/main/java'
+    }
+  }
 }
 
 protobuf {
   protoc {
-    artifact = 'com.google.protobuf:protoc:3.4.0'
+    artifact = 'com.google.protobuf:protoc:3.19.4'
   }
   plugins {
     grpc {
@@ -58,18 +63,12 @@ protobuf {
     }
   }
   generateProtoTasks {
+    all().each { task -> task.dependsOn updateSubmodules }
     all()*.plugins {
-      grpc {
-        // To generate deprecated interfaces and static bindService method,
-        // turn the enable_deprecated option to true below:
-        option 'enable_deprecated=false'
-      }
+      grpc {}
     }
   }
 }
-
-// Inform IntelliJ projects about the generated code.
-apply plugin: 'idea'
 
 idea {
   module {
@@ -80,84 +79,25 @@ idea {
   }
 }
 
-// Provide convenience executables for trying out the examples.
-apply plugin: 'application'
-
-startScripts.enabled = false
-
-// ------------------
-// Helloworld Example
-
-task helloworldGraphqlServer(type: CreateStartScripts) {
-  mainClassName = 'com.google.api.graphql.examples.helloworld.graphqlserver.GraphQLServer'
-  applicationName = 'helloworld-graphqlserver'
+task temporalGraphqlServer(type: CreateStartScripts) {
+  mainClassName = 'io.temporal.graphql.GraphQLServer'
+  applicationName = 'temporal-graphql-server'
   outputDir = new File(project.buildDir, 'tmp')
-  classpath = jar.outputs.files + project.configurations.runtime
-}
-
-task helloworldBackend(type: CreateStartScripts) {
-  mainClassName = 'com.google.api.graphql.examples.helloworld.backend.HelloWorldServer'
-  applicationName = 'helloworld-backend'
-  outputDir = new File(project.buildDir, 'tmp')
-  classpath = jar.outputs.files + project.configurations.runtime
-}
-
-// ------------------
-// Library Example
-
-task libraryGraphqlServer(type: CreateStartScripts) {
-  mainClassName = 'com.google.api.graphql.examples.library.graphqlserver.GraphQLServer'
-  applicationName = 'library-graphqlserver'
-  outputDir = new File(project.buildDir, 'tmp')
-  classpath = jar.outputs.files + project.configurations.runtime
-}
-
-task bookBackend(type: CreateStartScripts) {
-  mainClassName = 'com.google.api.graphql.examples.library.bookbackend.BookServer'
-  applicationName = 'book-backend'
-  outputDir = new File(project.buildDir, 'tmp')
-  classpath = jar.outputs.files + project.configurations.runtime
-}
-
-task shelfBackend(type: CreateStartScripts) {
-  mainClassName = 'com.google.api.graphql.examples.library.shelfbackend.ShelfServer'
-  applicationName = 'shelf-backend'
-  outputDir = new File(project.buildDir, 'tmp')
-  classpath = jar.outputs.files + project.configurations.runtime
-}
-
-// ------------------
-// Streaming Examples
-
-task streamingBackend(type: CreateStartScripts) {
-  mainClassName = 'com.google.api.graphql.examples.streaming.backend.HelloWorldServer'
-  applicationName = 'streaming-backend'
-  outputDir = new File(project.buildDir, 'tmp')
-  classpath = jar.outputs.files + project.configurations.runtime
-}
-
-task streamingGraphQlClient(type: CreateStartScripts) {
-  mainClassName = 'com.google.api.graphql.examples.streaming.graphqlclient.GraphQlGrpcClient'
-  applicationName = 'streaming-graphql-client'
-  outputDir = new File(project.buildDir, 'tmp')
-  classpath = jar.outputs.files + project.configurations.runtime
-}
-
-task streamingGraphQLServer(type: CreateStartScripts) {
-  mainClassName = 'com.google.api.graphql.examples.streaming.graphqlserver.GraphQlGrpcServer'
-  applicationName = 'streaming-graphql-server'
-  outputDir = new File(project.buildDir, 'tmp')
-  classpath = jar.outputs.files + project.configurations.runtime
+  classpath = jar.outputs.files + project.configurations.runtimeClasspath
 }
 
 applicationDistribution.into('bin') {
-  from(helloworldGraphqlServer)
-  from(helloworldBackend)
-  from(libraryGraphqlServer)
-  from(bookBackend)
-  from(shelfBackend)
-  from(streamingBackend)
-  from(streamingGraphQlClient)
-  from(streamingGraphQLServer)
+  from(temporalGraphqlServer)
   fileMode = 0755
+}
+
+task initSubmodules(type: Exec) {
+  description = 'Initializes submodules'
+  commandLine 'git', 'submodule', 'init'
+}
+
+task updateSubmodules(type: Exec) {
+  dependsOn initSubmodules
+  description = 'Update submodules'
+  commandLine 'git', 'submodule', 'update'
 }

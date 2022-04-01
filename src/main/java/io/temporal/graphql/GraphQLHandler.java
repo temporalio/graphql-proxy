@@ -34,22 +34,19 @@ import graphql.execution.instrumentation.tracing.TracingInstrumentation;
 import graphql.schema.GraphQLSchema;
 import java.io.IOException;
 import java.util.*;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 public class GraphQLHandler extends AbstractHandler {
   private static final Gson GSON = new GsonBuilder().serializeNulls().create();
-  private static final TypeToken<Map<String, Object>> MAP_TYPE_TOKEN =
-      new TypeToken<Map<String, Object>>() {};
+  private static final TypeToken<Map<String, Object>> MAP_TYPE_TOKEN = new TypeToken<>() {};
 
   private static final GraphQLSchema SCHEMA =
       Guice.createInjector(
               new SchemaProviderModule(),
-              new HelloWorldClientModule(),
-              new HelloWorldSchemaModule())
+              new ClientModule(),
+              new SchemaModule())
           .getInstance(Key.get(GraphQLSchema.class, Schema.class));
 
   private static final Instrumentation INSTRUMENTATION =
@@ -61,29 +58,23 @@ public class GraphQLHandler extends AbstractHandler {
   private static final GraphQL GRAPHQL =
       GraphQL.newGraphQL(SCHEMA).instrumentation(INSTRUMENTATION).build();
 
-  // https://www.eclipse.org/jetty/documentation/jetty-9/index.html#writing-custom-handlers
   @Override
-  public void handle(
-      String target,
-      Request request,
-      HttpServletRequest httpServletRequest,
-      HttpServletResponse httpServletResponse)
-      throws IOException, ServletException {
+  public void handle(String target, Request baseRequest, jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response) throws IOException, jakarta.servlet.ServletException {
     if ("/graphql".equals(target)) {
-      request.setHandled(true);
+      baseRequest.setHandled(true);
       if (request.getMethod().equals("OPTIONS")) {
-        httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
-        httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type");
-        httpServletResponse.setHeader("Access-Control-Max-Age", "86400");
-        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setHeader("Access-Control-Max-Age", "86400");
+        response.setStatus(HttpServletResponse.SC_OK);
         return;
       }
 
-      Map<String, Object> json = readJson(httpServletRequest);
+      Map<String, Object> json = readJson(request);
       String query = (String) json.get("query");
       if (query == null) {
-        httpServletResponse.setStatus(400);
+        response.setStatus(400);
         return;
       }
       String operationName = (String) json.get("operationName");
@@ -97,10 +88,10 @@ public class GraphQLHandler extends AbstractHandler {
               .context(new Object())
               .build();
       ExecutionResult executionResult = GRAPHQL.execute(executionInput);
-      httpServletResponse.setContentType("application/json");
-      httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-      httpServletResponse.setHeader("access-control-allow-origin", "*");
-      GSON.toJson(executionResult.toSpecification(), httpServletResponse.getWriter());
+      response.setContentType("application/json");
+      response.setStatus(HttpServletResponse.SC_OK);
+      response.setHeader("access-control-allow-origin", "*");
+      GSON.toJson(executionResult.toSpecification(), response.getWriter());
     }
   }
 
@@ -112,7 +103,7 @@ public class GraphQLHandler extends AbstractHandler {
     return variablesWithStringKey;
   }
 
-  private static Map<String, Object> readJson(HttpServletRequest request) {
+  private static Map<String, Object> readJson(jakarta.servlet.http.HttpServletRequest request) {
     try {
       String json = CharStreams.toString(request.getReader());
       return jsonToMap(json);

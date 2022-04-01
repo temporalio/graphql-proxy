@@ -34,13 +34,16 @@ dependencies {
   implementation "io.grpc:grpc-protobuf:${grpcVersion}"
   implementation "io.grpc:grpc-stub:${grpcVersion}"
 
+  implementation "javax.servlet:javax.servlet-api:4.0.1"
+  implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '11.0.8'
+  implementation group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '11.0.8'
+
+
   implementation "com.google.api.graphql:rejoiner:0.4.0-SNAPSHOT"
   implementation "com.google.api.graphql:rejoiner-grpc:0.4.0-SNAPSHOT"
   implementation "com.google.api.graphql:rejoiner-guice:0.4.0-SNAPSHOT"
-  implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.41.v20210516'
-  implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.2'
-  implementation "com.google.inject.extensions:guice-servlet:4.2.0"
-  implementation group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.3.27.v20190418'
+  implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.36'
+  implementation "com.google.inject.extensions:guice-servlet:5.1.0"
   implementation "net.javacrumbs.future-converter:future-converter-java8-guava:1.1.0"
 }
 

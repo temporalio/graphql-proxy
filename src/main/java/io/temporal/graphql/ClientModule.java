@@ -20,7 +20,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.temporal.api.workflowservice.v1.WorkflowServiceGrpc;
 
 /** Binds a stub for the {@link GreeterGrpc} service. */
-final class HelloWorldClientModule extends AbstractModule {
+final class ClientModule extends AbstractModule {
 
   @Override
   protected void configure() {

@@ -2,7 +2,7 @@
 
 A GraphQL server that proxies to Temporal's gRPC API (see [protos](https://github.com/temporalio/api/) and [server](https://github.com/temporalio/temporal)) using [`google/rejoiner`](https://github.com/google/rejoiner) and [GraphQL Java](https://www.graphql-java.com/).
 
-The current downside to this solution is how binary data like Payloads are represented. For a GraphQL server that decodes Payloads, see [`temporalio/graphql`](https://github.com/temporalio/graphql).
+The current downside to this solution is [how binary data like Payloads are represented](https://github.com/temporalio/graphql-full/issues/14). For a GraphQL server that decodes Payloads, see [`temporalio/graphql`](https://github.com/temporalio/graphql).
 
 ## Get started
 

@@ -1,4 +1,4 @@
-# `graphql-full`
+*⚠️ This project is in alpha. We welcome feedback and contributions.*
 
 A GraphQL server that proxies to Temporal's gRPC API (see [protos](https://github.com/temporalio/api/) and [server](https://github.com/temporalio/temporal)) using [`google/rejoiner`](https://github.com/google/rejoiner) and [GraphQL Java](https://www.graphql-java.com/).
 

@@ -22,7 +22,7 @@ repositories {
 }
 
 ext {
-  grpcVersion = '1.44.1'
+  grpcVersion = '1.50.3'
 }
 
 dependencies {
